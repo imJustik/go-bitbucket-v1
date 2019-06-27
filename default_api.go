@@ -5164,6 +5164,9 @@ func (a *DefaultApiService) GetPullRequestsPage(projectKey, repositorySlug strin
 	if err := typeCheckParameter(localVarOptionals["limit"], "int", "limit"); err != nil {
 		return nil, err
 	}
+	if err := typeCheckParameter(localVarOptionals["start"], "int", "start"); err != nil {
+		return nil, err
+	}
 
 	if localVarTempParam, localVarOk := localVarOptionals["direction"].(string); localVarOk {
 		localVarQueryParams.Add("direction", parameterToString(localVarTempParam, ""))
@@ -5183,8 +5186,11 @@ func (a *DefaultApiService) GetPullRequestsPage(projectKey, repositorySlug strin
 	if localVarTempParam, localVarOk := localVarOptionals["withProperties"].(bool); localVarOk {
 		localVarQueryParams.Add("withProperties", parameterToString(localVarTempParam, ""))
 	}
-	if localVarTempParam, localVarOk := localVarOptionals["limit"].(string); localVarOk {
+	if localVarTempParam, localVarOk := localVarOptionals["limit"].(int); localVarOk {
 		localVarQueryParams.Add("limit", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["start"].(int); localVarOk {
+		localVarQueryParams.Add("start", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
