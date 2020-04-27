@@ -2835,7 +2835,7 @@ func (a *DefaultApiService) Get(ctx context.Context) (*APIResponse, error) {
 	 @param "fromId" (int64) (optional) the id of the activity item to use as the first item in the returned page
 	 @param "fromType" (string) (required if &lt;strong&gt;fromId&lt;/strong&gt; is present) the type of the activity item specified by                  &lt;strong&gt;fromId&lt;/strong&gt; (either &lt;strong&gt;COMMENT&lt;/strong&gt; or &lt;strong&gt;ACTIVITY&lt;/strong&gt;)
  @return */
-func (a *DefaultApiService) GetActivities(pullRequestID int64, localVarOptionals map[string]interface{}) (*APIResponse, error) {
+func (a *DefaultApiService) GetActivities(projectKey, repositorySlug string, pullRequestID int64, localVarOptionals map[string]interface{}) (*APIResponse, error) {
 	var (
 		localVarHTTPMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -2846,6 +2846,8 @@ func (a *DefaultApiService) GetActivities(pullRequestID int64, localVarOptionals
 	// create path and map variables
 	localVarPath := a.client.cfg.BasePath + "/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/activities"
 	localVarPath = strings.Replace(localVarPath, "{"+"pullRequestId"+"}", fmt.Sprintf("%v", pullRequestID), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"projectKey"+"}", fmt.Sprintf("%v", projectKey), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"repositorySlug"+"}", fmt.Sprintf("%v", repositorySlug), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -2857,12 +2859,24 @@ func (a *DefaultApiService) GetActivities(pullRequestID int64, localVarOptionals
 	if err := typeCheckParameter(localVarOptionals["fromType"], "string", "fromType"); err != nil {
 		return nil, err
 	}
+	if err := typeCheckParameter(localVarOptionals["limit"], "int", "limit"); err != nil {
+		return nil, err
+	}
+	if err := typeCheckParameter(localVarOptionals["start"], "int", "start"); err != nil {
+		return nil, err
+	}
 
 	if localVarTempParam, localVarOk := localVarOptionals["fromId"].(int64); localVarOk {
 		localVarQueryParams.Add("fromId", parameterToString(localVarTempParam, ""))
 	}
 	if localVarTempParam, localVarOk := localVarOptionals["fromType"].(string); localVarOk {
 		localVarQueryParams.Add("fromType", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["limit"].(int); localVarOk {
+		localVarQueryParams.Add("limit", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["start"].(int); localVarOk {
+		localVarQueryParams.Add("start", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}

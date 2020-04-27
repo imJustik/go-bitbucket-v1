@@ -123,6 +123,11 @@ type PullRequestRef struct {
 	Repository   Repository `json:"repository"`
 }
 
+type WebHookPullRequest struct {
+	EventKey    string      `json:"eventKey"`
+	PullRequest PullRequest `json:"pullRequest"`
+}
+
 type PullRequest struct {
 	ID           int                `json:"id"`
 	Version      int32              `json:"version"`
@@ -133,6 +138,7 @@ type PullRequest struct {
 	Closed       bool               `json:"closed"`
 	CreatedDate  int64              `json:"createdDate"`
 	UpdatedDate  int64              `json:"updatedDate"`
+	ClosedDate   int64              `json: "closedDate"`
 	FromRef      PullRequestRef     `json:"fromRef"`
 	ToRef        PullRequestRef     `json:"toRef"`
 	Locked       bool               `json:"locked"`
@@ -273,6 +279,45 @@ type Content struct {
 	Revision string `json:"revision"`
 }
 
+type PullRequestsResult struct {
+	Start      int           `json:"start"`
+	Size       int           `json:"size"`
+	Limit      int           `json:"limit"`
+	IsLastPage bool          `json:"isLastPage"`
+	Values     []PullRequest `json:"values"`
+}
+
+type PullRequestActions struct {
+	Size       int                   `json: "size"`
+	Limit      int                   `json: "limit"`
+	IsLastPage bool                  `json: "isLastPage"`
+	Values     []PullRequestActivity `json: "values"`
+}
+
+type PullRequestActivity struct {
+	ID          int64              `json:"id"`
+	CreatedDate int64              `json:"createdDate"`
+	User        UserWithLinks      `json:"user"`
+	Action      string             `json:"action"`
+	Comment     PullRequestComment `json: "comment"`
+}
+
+type PullRequestComment struct {
+	Text string `json: "text"`
+}
+
+func GetPullRequests(r *APIResponse) (PullRequestsResult, error) {
+	var m PullRequestsResult
+	err := mapstructure.Decode(r.Values, &m)
+	return m, err
+}
+
+func GetPullRequestActions(r *APIResponse) (PullRequestActions, error) {
+	var m PullRequestActions
+	err := mapstructure.Decode(r.Values, &m)
+	return m, err
+}
+
 func (k *SSHKey) String() string {
 	parts := make([]string, 1, 2)
 	parts[0] = strings.TrimSpace(k.Text)
@@ -289,6 +334,12 @@ func GetCommitsResponse(r *APIResponse) ([]Commit, error) {
 // GetTagsResponse cast Tags into structure
 func GetTagsResponse(r *APIResponse) ([]Tag, error) {
 	var m []Tag
+	err := mapstructure.Decode(r.Values["values"], &m)
+	return m, err
+}
+
+func GetActivities(r *APIResponse) ([]PullRequestActivity, error) {
+	var m []PullRequestActivity
 	err := mapstructure.Decode(r.Values["values"], &m)
 	return m, err
 }
